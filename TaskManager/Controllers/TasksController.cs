@@ -117,7 +117,7 @@ namespace TaskManager.Controllers
                 return NotFound(new { message = $"Task with id {id} was not found." });
 
             _db.Tasks.Remove(task);
-            _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
             return NoContent();
 
