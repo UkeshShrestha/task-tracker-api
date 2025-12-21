@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Data;
@@ -87,9 +88,40 @@ namespace TaskManager.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<TaskDto>> UpdateIsCompleted(int id, [FromBody] TaskUpdateDto dto)
         {
+            var task = await _db.Tasks.FirstOrDefaultAsync(t => t.Id == id);
 
+            if (task is null)
+                return NotFound(new
+                {
+                    message = $"Task with id {id} was not found"
+                });
+
+            task.IsCompleted = dto.IsCompleted;
+            await _db.SaveChangesAsync();
+
+            var result = new TaskDto
+            {
+                Id = task.Id,
+                Title = task.Title,
+                IsCompleted = task.IsCompleted,
+                CreatedAt = task.CreatedAt
+            };
+            return Ok(result);
         }
 
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<TaskDto>> DeleteTask(int id)
+        {
+            var task = await _db.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+            if (task is null)
+                return NotFound(new { message = $"Task with id {id} was not found." });
+
+            _db.Tasks.Remove(task);
+            _db.SaveChangesAsync();
+
+            return NoContent();
+
+        }
 
     }
 }
