@@ -6,7 +6,7 @@ export async function getTasks(){
     return await res.json();
 }
 
-export async function createTask(){
+export async function createTask(title){
     const res = await fetch(`${baseUrl}/api/tasks`,{
         method: "POST",
         headers: {"Content-Type": "application/json"},
