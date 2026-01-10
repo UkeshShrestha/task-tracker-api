@@ -28,6 +28,9 @@ export default function App(){
   const [search, setSearch] = useState("");
 
   const normalizedSearch = search.trim().toLowerCase();
+  const activeCount = tasks.filter((task) => !task.isCompleted).length;
+  const completedCount = tasks.filter((task) => task.isCompleted).length;
+
 
   const visibleTasks = tasks.filter((task) => {
     if (filter === "completed" && !task.isCompleted) return false; 
@@ -36,6 +39,7 @@ export default function App(){
     if(!normalizedSearch) return true;
     return task.title.toLowerCase().includes(normalizedSearch);
   });
+    const visibleTasksCount = visibleTasks.length;
 
   async function load(){
     setError("");
@@ -143,12 +147,26 @@ export default function App(){
           placeholder="Search tasks..."
           style={{padding: 8, width: "100%"}}
         />
+        {
+          tasks.length > 0 && visibleTasksCount === 0 && (
+            <p>No tasks match your search.</p>
+        )}
+        {
+          search.trim() && (
+            <button type="button"
+            onClick={()=> setSearch("")}
+            >Clear</button>
+          )
+        }
       </div>
 
       <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
         <button onClick={() => setFilter("all")} disabled={filter === "all"}>All</button>
         <button onClick={() => setFilter("active")} disabled={filter === "active"}>Active</button>
         <button onClick={() => setFilter("completed")} disabled={filter === "completed"}>Completed</button>
+      </div>
+      <div style={{marginTop: 12}}>
+         <strong>Total: {visibleTasks ? visibleTasksCount : ``}, Active: {activeCount}, Completed: {completedCount}</strong>
       </div>
 
       {loading ? (
