@@ -25,11 +25,16 @@ export default function App(){
   const [isAdding, setIsAdding] = useState(false);
   const [busyIds, setBusyIds] = useState(() => new Set());
   const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === "completed") return task.isCompleted;
-    if (filter === "active") return !task.isCompleted;
-    return true;
+  const normalizedSearch = search.trim().toLowerCase();
+
+  const visibleTasks = tasks.filter((task) => {
+    if (filter === "completed" && !task.isCompleted) return false; 
+    if (filter === "active" && task.isCompleted) return false;
+
+    if(!normalizedSearch) return true;
+    return task.title.toLowerCase().includes(normalizedSearch);
   });
 
   async function load(){
@@ -131,6 +136,15 @@ export default function App(){
         </p>
       )}
 
+      <div style={{marginTop: 12}}>
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search tasks..."
+          style={{padding: 8, width: "100%"}}
+        />
+      </div>
+
       <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
         <button onClick={() => setFilter("all")} disabled={filter === "all"}>All</button>
         <button onClick={() => setFilter("active")} disabled={filter === "active"}>Active</button>
@@ -140,9 +154,9 @@ export default function App(){
       {loading ? (
         <p style = {{marginTop: 16}}>Loading...</p>
       ) : tasks.length === 0? (
-        <p style ={{marginTop: 16}}>No tasks yet.</p>
+        <p style ={{marginTop: 16}}>{tasks.length === 0 ? "No tasks yet." : "No tasks match your search."}</p>
       ) : (
-        <TaskList tasks={filteredTasks} onToggle={onToggle} onDelete={onDelete} busyIds={busyIds}></TaskList>
+        <TaskList tasks={visibleTasks} onToggle={onToggle} onDelete={onDelete} busyIds={busyIds}></TaskList>
       )}
 
     </div>
