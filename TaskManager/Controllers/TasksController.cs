@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TaskManager.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using TaskManager.Dtos;
-using TaskManager.Models;
 using TaskManager.Services;
 
 namespace TaskManager.Controllers
